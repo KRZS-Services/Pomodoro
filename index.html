@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100;300;700&family=Roboto:wght@100;300;700&family=Azeret+Mono:wght@100;300;700&family=Rubik:wght@100;300;700&family=Comic+Neue:wght@100;300;700" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp" />
+        <meta name="theme-color" content="#cd370c">
+        <title id="title">Pomodoro Timer</title>
+        <style>
+            * {
+                font-weight: 400;
+                transition: color 0.3s, background-color 0.3s;
+            }
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+            .timeleft {
+                font-size: 125px;
+                font-weight: 100;
+                display: inherit;
+                user-select: none;
+            }
+            .contentwrapper {
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .icon {
+                font-size: 20px;
+                width: 35px;
+                height: 35px;
+                padding: none;
+                border: none;
+                border-radius: 10px;
+                margin: 2px;
+                cursor: pointer;
+                user-select: none;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .icon:active {
+                outline: none;
+            }
+            .icon:disabled {
+                background: gray !important;
+                cursor: not-allowed;
+            }
+            .buttons {
+                display: flex;
+                justify-content: center;
+            }
+            .stage {
+                font-weight: 300;
+                text-align: center;
+                margin: 10px;
+                font-size: 20px;
+            }
+            .tsoverlay, .thoverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                animation: fade 1s;
+            }
+            .timeselect, .thselect {
+                width: 50%;
+                border-radius: 20px;
+                box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+                padding: 30px;
+                animation: fademove 2s;
+            }
+            .tstext {
+                font-weight: bold;
+                margin: 0 10px 10px 0;
+                font-size: 20px;
+            }
+            .editable {
+                font-weight: bold;
+                font-size: 20px;
+                border-radius: 3px;
+            }
+            .tslabel {
+                margin: 5px 5px 5px 0;
+                font-size: 15px;
+                font-weight: 300;
+            }
+            .tsbreaker {
+                margin: 5px;
+            }
+            .tsline {
+                margin: 10px 10px 10px 0;
+                border-radius: 1px;
+                width: 100%;
+            }
+            .tsinput {
+                padding: 9px 15px;
+                font-size: 15px;
+                width: calc(100% - 30px);
+                margin: 5px 5px 5px 0;
+                border-radius: 24px;
+                transition: all 0.3s;
+            }
+            .tsselect {
+                width: 100%;
+                height: 20px;
+                font-size: 12px;
+                font-weight: 300;
+                border: none;
+                border-radius: 4px;
+            }
+            .tssubmit {
+                margin-top: 15px;
+                padding: 9px 15px;
+                font-size: 16px;
+                font-weight: 300;
+                width: calc(100% + 5px);
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .tssubmit:hover {
+                transform: translateY(-4px);
+            }
+            .tssubmit:active {
+                transform: translateY(4px) scale(0.95);
+            }
+            #inputform, .thform {
+                animation: fademove 3s;
+            }
+            .stopringtone {
+                font-size: 20px;
+                font-weight: 300;
+                width: 100%;
+                height: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                transition: all 1s;
+                top: -100px;
+                cursor: pointer;
+                user-select: none;
+            }
+            @keyframes fade {
+                from {opacity: 0%}
+                to {opacity: 100%}
+            }
+            @keyframes fademove {
+                from {opacity: 0%; transform: translateY(20%)}
+                to {opacity: 100%; transform: translateY(0)}
+            }
+            @keyframes scaleout {
+                from {transform: scale(1)}
+                to {transform: scale(0)}
+            }
+            @keyframes fadeout {
+                from {opacity: 100%;}
+                to {opacity: 0%;}
+            }
+            .nowakelock {
+                width: 100%;
+                position: absolute;
+                bottom: 5px;
+                left: 0;
+                text-align: center;
+                display: none;
+                z-index: 0;
+            }
+            a {
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .hc0 {
+                height: 40px;
+                width: 40px;
+                position: relative;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .hc0:hover {
+                transform: scale(1.05);
+            }
+            .hc0:active {
+                transform: scale(0.95);
+            }
+            .hc1 {
+                height: 40px; 
+                width: 20px; 
+                border-radius: 20px 0 0 20px; 
+                position: absolute;
+                left: 0;
+            }
+            .hc2 {
+                height: 40px; 
+                width: 20px; 
+                border-radius: 0 20px 20px 0; 
+                position: absolute;
+                right: 0;
+            }
+            .hcselected {
+                transform: scale(1.2);
+            }
+            .themetr {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                row-gap: 10px;
+                justify-content: center;
+            }
+            .classic1 {background-color: rgba(231,210,178)}
+            .classic2 {background-color: rgba(205,55,12)}
+            .blueberry1 {background-color: rgba(8,12,94)}
+            .blueberry2 {background-color: rgba(63,68,161)}
+            .hacker1 {background-color: rgba(3,74,2)}
+            .hacker2 {background-color: rgba(11,173,9)}
+            .ultralight1 {background-color: white}
+            .ultralight2 {background-color: black}
+            .ultradark1 {background-color: black}
+            .ultradark2 {background-color: white}
+            .kd1 {background-color: rgba(234,99,166)}
+            .kd2 {background-color: rgba(98,190,249)}
+
+            /* Classic */
+            body.classic {
+                background: rgba(231,210,178);
+                color: black;
+            }
+            *.classic {
+                font-family: Noto Serif;
+            }
+            .hc0.classic {
+                border: 1px solid black;
+            }
+            .icon.classic {
+                background: rgba(205,55,12);
+                color: white;
+                font-family: Material Symbols Rounded;
+            }
+            .icon.classic:active {
+                background: rgba(79,1,3);
+            }
+            a.classic {
+                color: rgba(205,55,12);
+            }
+            .stopringtone.classic {
+                background: rgba(205,55,12);
+                color: white;
+            }
+            .timeselect.classic, .thselect.classic {
+                background: white;
+            }
+            .tsoverlay.classic, .thoverlay.classic {
+                background: rgba(0,0,0,0.5);
+            }
+            .tssubmit.classic {
+                background: rgba(205,55,12);
+                color: white;
+            }
+            .tsselect.classic {
+                background: rgba(205,55,12);
+                color: white;
+            }
+            .tsinput.classic {
+                border: 2px solid gray;
+                background: white;
+                color: black;
+            }
+            .editable.classic {
+                border: 1px solid gray;
+            }
+            .tsline.classic {
+                border: 1px solid black;
+            }
+
+            /* Blueberry */
+            body.blueberry {
+                background: rgba(8,12,94);
+                color: white;
+            }
+            *.blueberry {
+                font-family: Roboto;
+            }
+            .hc0.blueberry {
+                border: 1px solid white;
+            }
+            .icon.blueberry {
+                background: rgba(63,68,161);
+                color: white;
+                font-family: Material Symbols Rounded;
+            }
+            .icon.blueberry:active {
+                background: rgba(3,4,38);
+            }
+            a.blueberry {
+                color: white;
+            }
+            .stopringtone.blueberry {
+                background: rgba(63,68,161);
+                color: white;
+            }
+            .timeselect.blueberry, .thselect.blueberry {
+                background: rgba(3,4,38);
+            }
+            .tsoverlay.blueberry, .thoverlay.blueberry {
+                background: rgba(0,0,0,0.5);
+            }
+            .tssubmit.blueberry {
+                background: rgba(63,68,161);
+                color: white;
+            }
+            .tsselect.blueberry {
+                background: rgba(63,68,161);
+                color: white;
+            }
+            .tsinput.blueberry {
+                border: 2px solid white;
+                background: black;
+                color: white;
+            }
+            .editable.blueberry {
+                border: 1px solid white;
+            }
+            .tsline.blueberry {
+                border: 1px solid white;
+            }
+
+            /* Hacker */
+            body.hacker {
+                background: rgba(3,74,2);
+                color: white;
+            }
+            *.hacker {
+                font-family: Azeret Mono;
+            }
+            .hc0.hacker {
+                border: 1px solid white;
+            }
+            .icon.hacker {
+                background: rgba(11,173,9);
+                color: white;
+                font-family: Material Symbols Sharp;
+            }
+            .icon.hacker:active {
+                background: rgba(3,26,2);
+            }
+            a.hacker {
+                color: white;
+            }
+            .stopringtone.hacker {
+                background: rgba(11,173,9);
+                color: white;
+            }
+            .timeselect.hacker, .thselect.hacker {
+                background: rgba(3,26,2);
+            }
+            .tsoverlay.hacker, .thoverlay.hacker {
+                background: rgba(0,0,0,0.5);
+            }
+            .tssubmit.hacker {
+                background: rgba(11,173,9);
+                color: white;
+            }
+            .tsselect.hacker {
+                background: rgba(11,173,9);
+                color: white;
+            }
+            .tsinput.hacker {
+                border: 2px solid white;
+                background: black;
+                color: white;
+            }
+            .editable.hacker {
+                border: 1px solid white;
+            }
+            .tsline.hacker {
+                border: 1px solid white;
+            }
+
+            /* Ultra Light */
+            body.ultralight {
+                background: white;
+                color: black;
+            }
+            *.ultralight {
+                font-family: Rubik;
+            }
+            .hc0.ultralight {
+                border: 1px solid black;
+            }
+            .icon.ultralight {
+                background: black;
+                color: white;
+                font-family: Material Symbols Rounded;
+            }
+            .icon.ultralight:active {
+                background: rgba(100,100,100);
+            }
+            a.ultralight {
+                color: black;
+            }
+            .stopringtone.ultralight {
+                background: black;
+                color: white;
+            }
+            .timeselect.ultralight, .thselect.ultralight {
+                background: white;
+            }
+            .tsoverlay.ultralight, .thoverlay.ultralight {
+                background: rgba(0,0,0,0.5);
+            }
+            .tssubmit.ultralight {
+                background: black;
+                color: white;
+            }
+            .tsselect.ultralight {
+                background: black;
+                color: white;
+            }
+            .tsinput.ultralight {
+                border: 2px solid black;
+                background: white;
+                color: black;
+            }
+            .editable.ultralight {
+                border: 1px solid black;
+            }
+            .tsline.ultralight {
+                border: 1px solid black;
+            }
+            
+            /* Ultra Dark */
+            body.ultradark {
+                background: black;
+                color: white;
+            }
+            *.ultradark {
+                font-family: Rubik;
+            }
+            .hc0.ultradark {
+                border: 1px solid white;
+            }
+            .icon.ultradark {
+                background: white;
+                color: black;
+                font-family: Material Symbols Rounded;
+            }
+            .icon.ultradark:active {
+                background: rgba(50,50,50);
+            }
+            a.ultradark {
+                color: white;
+            }
+            .stopringtone.ultradark {
+                background: white;
+                color: black;
+            }
+            .timeselect.ultradark, .thselect.ultradark {
+                background: black;
+            }
+            .tsoverlay.ultradark, .thoverlay.ultradark {
+                background: rgba(255,255,255,0.5);
+            }
+            .tssubmit.ultradark {
+                background: white;
+                color: black;
+            }
+            .tsselect.ultradark {
+                background: white;
+                color: black;
+            }
+            .tsinput.ultradark {
+                border: 2px solid white;
+                background: black;
+                color: white;
+            }
+            .editable.ultradark {
+                border: 1px solid white;
+            }
+            .tsline.ultradark {
+                border: 1px solid white;
+            }
+            
+            /* KD */
+            body.kd {
+                background: rgba(234,99,166);
+                color: white;
+            }
+            *.kd {
+                font-family: Comic Neue;
+            }
+            .hc0.kd {
+                border: 1px solid white;
+            }
+            .icon.kd {
+                background: rgba(98,190,249);
+                color: white;
+                font-family: Material Symbols Rounded;
+            }
+            .icon.kd:active {
+                background: rgba(71,137,222);
+            }
+            a.kd {
+                color: white;
+            }
+            .stopringtone.kd {
+                background: rgba(71,137,222);
+                color: white;
+            }
+            .timeselect.kd, .thselect.kd {
+                background: rgba(71,137,222);
+            }
+            .tsoverlay.kd, .thoverlay.kd {
+                background: rgba(0,0,0,0.5);
+            }
+            .tssubmit.kd {
+                background: rgba(234,99,166);
+                color: white;
+            }
+            .tsselect.kd {
+                background: rgba(234,99,166);
+                color: white;
+            }
+            .tsinput.kd {
+                border: 2px solid white;
+                background: rgba(234,99,166);
+                color: white;
+            }
+            .editable.kd {
+                border: 1px solid white;
+            }
+            .tsline.kd {
+                border: 1px solid white;
+            }
+            
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="stopringtone" onclick="stopRingtone()">Stop Ringtone</div>
+        <div class="contentwrapper">
+            <div class="content">
+                <span class="timeleft">--:--</span>
+                <div class="buttons">
+                    <button class="icon" id="timeselect">timer</button>
+                    <button class="icon" id="theme">contrast</button>
+                    <button class="icon" id="restart" disabled>replay</button>
+                    <button class="icon" id="playpause" disabled>play_circle</button>
+                    <button class="icon" id="stop">stop</button>
+                </div>
+                <p class="stage">Stage: --</p>
+            </div>
+        </div>
+        <div class="tsoverlay">
+            <div class="timeselect">
+                <form id="inputform">
+                    <p class="tstext"><span class="editable" contenteditable="plaintext-only" id="workname">Work</span> stage:</p>
+                    <label for="1m" class="tslabel">Minutes:</label>
+                    <br class="tsbreaker">
+                    <input type="number" min="0" name="1m" id="m1" class="tsinput" onkeyup="event.target.value = event.target.value.replace(/\./g,'')" required />
+                    <br class="tsbreaker">
+                    <label for="1s" class="tslabel">Seconds:</label>
+                    <br class="tsbreaker">
+                    <input type="number" min="0" name="1s" id="s1" class="tsinput" onkeyup="event.target.value = event.target.value.replace(/\./g,'')" required />
+                    <br class="tsbreaker">
+                    <label for="tsr1" class="tslabel">Select a ringtone:</label>
+                    <select class="tsselect" id="tsr1" name="tsr1" onchange="playRingtone(event.target.value, 1);">
+                        <option value="none" selected>None</option>
+                        <option value="upload" id="u2">Upload</option>
+                        <optgroup label="Music">
+                            <option value="simple">Simple</option>
+                            <option value="synth">Synth</option>
+                            <option value="keys">Keys</option>
+                            <option value="layers">Layers</option>
+                            <option value="bells">Bells</option>
+                            <option value="motivational">Motivational</option>
+                            <option value="energetic">Energetic</option>
+                            <option value="touch">Touch</option>
+                            <option value="intense">Intense</option>
+                            <option value="calm">Calm</option>
+                            <option value="slowjam">Slow Jam</option>
+                            <option value="icebreaker">Ice Breaker</option>
+                            <option value="planetary">Planetary</option>
+                            <option value="sad">Sad</option>
+                            <option value="70s">70s</option>
+                            <option value="waterypiano">Watery Piano</option>
+                            <option value="eastside">Eastside</option>
+                            <option value="flare">Flare</option>
+                            <option value="goodvibes">Good Vibes</option>
+                        </optgroup>
+                        </optgroup>
+                        <optgroup label="Sounds">
+                            <option value="metalcrash">Metal Crash</option>
+                            <option value="meow">Meow</option>
+                            <option value="woof">Woof</option>
+                            <option value="laser">Laser</option>
+                            <option value="animalcall">Animal Call</option>
+                            <option value="chirp">Chirp</option>
+                            <option value="rooster">Rooster</option>
+                            <option value="car">Car</option>
+                            <option value="robot">Robot</option>
+                        </optgroup>
+                    </select>
+                    <input type="file" accept="audio/*" id="audioplayer1" style="display:none" />
+                    <hr class="tsline">
+                    <p class="tstext"><span class="editable" contenteditable="plaintext-only" id="breakname">Break</span> stage:</p>
+                    <label for="2m" class="tslabel">Minutes:</label>
+                    <br class="tsbreaker">
+                    <input type="number" min="0" name="2m" id="m2" class="tsinput" onkeyup="event.target.value = event.target.value.replace(/\./g,'')" required />
+                    <br class="tsbreaker">
+                    <label for="2m" class="tslabel">Seconds:</label>
+                    <br class="tsbreaker">
+                    <input type="number" min="0" name="2s" id="s2" class="tsinput" onkeyup="event.target.value = event.target.value.replace(/\./g,'')" required />
+                    <br class="tsbreaker">
+                    <label for="tsr2" class="tslabel">Select a ringtone:</label>
+                    <select class="tsselect" id="tsr2" name="tsr2" onchange="playRingtone(event.target.value, 2)">
+                        <option value="none" selected>None</option>
+                        <option value="upload" id="u2">Upload</option>
+                        <optgroup label="Music">
+                            <option value="simple">Simple</option>
+                            <option value="synth">Synth</option>
+                            <option value="keys">Keys</option>
+                            <option value="layers">Layers</option>
+                            <option value="bells">Bells</option>
+                            <option value="motivational">Motivational</option>
+                            <option value="energetic">Energetic</option>
+                            <option value="touch">Touch</option>
+                            <option value="intense">Intense</option>
+                            <option value="calm">Calm</option>
+                            <option value="slowjam">Slow Jam</option>
+                            <option value="icebreaker">Ice Breaker</option>
+                            <option value="planetary">Planetary</option>
+                            <option value="sad">Sad</option>
+                            <option value="70s">70s</option>
+                            <option value="waterypiano">Watery Piano</option>
+                            <option value="eastside">Eastside</option>
+                            <option value="flare">Flare</option>
+                            <option value="goodvibes">Good Vibes</option>
+                        </optgroup>
+                        <optgroup label="Sounds">
+                            <option value="metalcrash">Metal Crash</option>
+                            <option value="meow">Meow</option>
+                            <option value="woof">Woof</option>
+                            <option value="laser">Laser</option>
+                            <option value="animalcall">Animal Call</option>
+                            <option value="chirp">Chirp</option>
+                            <option value="rooster">Rooster</option>
+                            <option value="car">Car</option>
+                            <option value="robot">Robot</option>
+                        </optgroup>
+                    </select>
+                    <input type="file" accept="audio/*" id="audioplayer2" style="display:none" />
+                    <input class="tssubmit" type="submit" value="Submit" />
+                </form>
+            </div>
+        </div>
+        <div class="thoverlay">
+            <div class="thselect">
+                <div class="thform">
+                    <div class="themetr">
+                        <div class="hc0" id="thclassic" onclick="changeTheme('classic')">
+                            <div class="hc1 classic1"></div>
+                            <div class="hc2 classic2"></div>
+                        </div>
+                        <div class="hc0" id="thblueberry" onclick="changeTheme('blueberry')">
+                            <div class="hc1 blueberry1"></div>
+                            <div class="hc2 blueberry2"></div>
+                        </div>
+                        <div class="hc0" id="thhacker" onclick="changeTheme('hacker')">
+                            <div class="hc1 hacker1"></div>
+                            <div class="hc2 hacker2"></div>
+                        </div>
+                        <div class="hc0" id="thultralight" onclick="changeTheme('ultralight')">
+                            <div class="hc1 ultralight1"></div>
+                            <div class="hc2 ultralight2"></div>
+                        </div>
+                        <div class="hc0" id="thultradark" onclick="changeTheme('ultradark')">
+                            <div class="hc1 ultradark1"></div>
+                            <div class="hc2 ultradark2"></div>
+                        </div>
+                        <div class="hc0" id="thkd" onclick="changeTheme('kd')">
+                            <div class="hc1 kd1"></div>
+                            <div class="hc2 kd2"></div>
+                        </div>
+                    </div>
+                    <button class="tssubmit" id="thclose">Close</button>
+                </div>
+            </div>
+        </div>
+        <span class="nowakelock">Note: Your browser may not be supported. Some functions may not work. <a href="browsers">Learn more</a></span>
+    </body>
+    <script>
+        if (localStorage.getItem("theme") == undefined) {
+            localStorage.setItem("theme", "classic");
+            document.querySelector("#thclassic").classList.add("hcselected");
+        };
+        document.querySelector("#th" + localStorage.getItem("theme")).classList.add("hcselected");
+        elements = document.querySelectorAll('*');
+        elements.forEach(function(element) {
+            element.classList.add(localStorage.getItem("theme"));
+        });
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen')
+        .then((w) => {
+            w.release();
+        });
+        } else {
+            document.querySelector(".nowakelock").style.display = "initial";
+        };
+        if (!window.chrome || !'WebkitAppearance' in document.documentElement.style) {
+            document.querySelector(".nowakelock").style.display = "initial";
+        };
+        timeleft = document.querySelector(".timeleft");
+        timeselect = document.querySelector("#timeselect");
+        restart = document.querySelector("#restart");
+        playpause = document.querySelector("#playpause");
+        theme = document.querySelector("#theme");
+        reloadpage = document.querySelector("#stop");
+        themeclose = document.querySelector("#thclose");
+        stage = document.querySelector(".stage");
+        title = document.querySelector("#title");
+        inputform = document.querySelector("#inputform");
+        timeselect.addEventListener("click", function () {
+            document.querySelector(".tsoverlay").style.display = "flex";
+        });
+        inputform.addEventListener("submit", function () {
+            event.preventDefault();
+            stage.textContent = "Stage: " + document.querySelector("#workname").textContent;
+            audioelem.pause();
+            document.querySelector(".timeselect").style.animation = "scaleout 0.3s";
+            document.querySelector(".tsoverlay").style.animation = "fadeout 0.3s";
+            setTimeout(function () {
+                document.querySelector(".tsoverlay").style.display = "none";
+            },300);
+            m1v = document.querySelector("#m1").value;
+            s1v = document.querySelector("#s1").value;
+            m2v = document.querySelector("#m2").value;
+            s2v = document.querySelector("#s2").value;
+            minutes = m1v;
+            seconds = s1v;
+            r1 = document.querySelector("#tsr1").value;
+            r2 = document.querySelector("#tsr2").value;
+            if (seconds.toString().length != 1) {
+                    timeleft.textContent = minutes + ":" + seconds;
+                    title.innerHTML = minutes + ":" + seconds;
+            } else {
+                    timeleft.textContent = minutes + ":0" + seconds;
+                    title.innerHTML = minutes + ":0" + seconds;
+            };
+            timeselect.disabled = true;
+            restart.disabled = false;
+            playpause.disabled = false;
+            inter = setInterval(repeater,1000);
+            function repeater() {
+                if (playpause.textContent != "play_circle") {
+                    if (seconds == 0) {
+                        minutes = minutes - 1;
+                        seconds = 59;
+                    } else {
+                        seconds = seconds - 1;
+                    };
+                    if (seconds.toString().length != 1) {
+                        timeleft.textContent = minutes + ":" + seconds;
+                        title.innerHTML = minutes + ":" + seconds;
+                    } else {
+                        timeleft.textContent = minutes + ":0" + seconds;
+                        title.innerHTML = minutes + ":0" + seconds;
+                    };
+                    if (minutes == 0) {
+                        if (seconds == 0) {
+                            if (stage.textContent == "Stage: " + document.querySelector("#workname").textContent) {
+                                minutes = m2v;
+                                seconds = s2v;
+                                stage.textContent = "Stage: " + document.querySelector("#breakname").textContent;
+                                startRingtone(r1, 1);
+                                if (r1 != "none") {
+                                    document.querySelector(".stopringtone").style.top = "0";
+                                };
+                            } else {
+                                minutes = m1v;
+                                seconds = s1v;
+                                stage.textContent = "Stage: " + document.querySelector("#workname").textContent;
+                                startRingtone(r2, 2);
+                                if (r2 != "none") {
+                                    document.querySelector(".stopringtone").style.top = "0";
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        });
+        theme.addEventListener("click", function () {
+            document.querySelector(".thoverlay").style.display = "flex";
+        });
+        reloadpage.addEventListener("click", function () {
+            location.reload();
+        });
+        themeclose.addEventListener("click", function () {
+            document.querySelector(".thselect").style.animation = "scaleout 0.3s";
+            document.querySelector(".thoverlay").style.animation = "fadeout 0.3s";
+            setTimeout(function () {
+                document.querySelector(".thoverlay").style.display = "none";
+                document.querySelector(".thselect").style.animation = "fademove 2s";
+                document.querySelector(".thoverlay").style.animation = "fade 1s";
+            },300);
+        });
+        function changeTheme(theme) {
+            localStorage.setItem("theme", theme);
+            document.querySelector("#thclassic").classList.remove("hcselected");
+            document.querySelector("#thblueberry").classList.remove("hcselected");
+            document.querySelector("#thhacker").classList.remove("hcselected");
+            document.querySelector("#thultralight").classList.remove("hcselected");
+            document.querySelector("#thultradark").classList.remove("hcselected");
+            document.querySelector("#thkd").classList.remove("hcselected");
+            document.querySelector("#th" + theme).classList.add("hcselected");
+            elements = document.querySelectorAll('*');
+            elements.forEach(function(element) {
+                element.classList.remove("clasic");
+                element.classList.remove("blueberry");
+                element.classList.remove("hacker");
+                element.classList.remove("ultralight");
+                element.classList.remove("ultradark");
+                element.classList.remove("kd");
+                element.classList.add(theme);
+            });
+        };
+        playpause.addEventListener("click", function () {
+            if (playpause.textContent == "pause_circle") {
+                playpause.textContent = "play_circle";
+            } else {
+                playpause.textContent = "pause_circle";
+            };
+        });
+        restart.addEventListener("click", function () {
+            playpause.textContent = "play_circle";
+            stage.textContent = "Stage: " + document.querySelector("#workname").textContent;
+            if (s1v.toString().length != 1) {
+                    timeleft.textContent = m1v + ":" + s1v;
+                    title = m1v + ":" + s1v;
+            } else {
+                    timeleft.textContent = m1v + ":0" + s1v;
+                    title = m1v + ":0" + s1v;
+            };
+            minutes = m1v;
+            seconds = s1v;
+        });
+        audioelem = new Audio("ringtones/synth.wav");
+        function playRingtone(tone, stage) {
+            if (tone != "none") {
+                if (tone != "upload") {
+                    audioelem.pause();
+                    document.querySelector("#audioplayer" + stage).style.display = "none";
+                    audioelem.currentTime = 0;
+                    audioelem = new Audio("ringtones/" + tone + ".wav");
+                    audioelem.play();
+                    document.querySelector("#audioplayer" + stage).required = false;
+                } else {
+                    document.querySelector("#audioplayer" + stage).style.display = "initial";
+                    document.querySelector("#audioplayer" + stage).required = true;
+                };
+            };
+        };
+        document.querySelector("#audioplayer1").onchange = function () {
+            setTimeout(function () {
+                audioelem.pause();
+                audioelem.currentTime = 0;
+                file = document.querySelector('#audioplayer1').files[0];
+                if (file) {
+                    document.querySelector("#tsr1").options[1].innerHTML = "Upload - " + file.name;
+                    objectURL = URL.createObjectURL(file);
+                    audioelem = new Audio(objectURL);
+                    audioelem.play();
+                    customringtone1 = objectURL;
+                };
+            });
+        };
+        document.querySelector("#audioplayer2").onchange = function () {
+            setTimeout(function () {
+                audioelem.pause();
+                audioelem.currentTime = 0;
+                file = document.querySelector('#audioplayer2').files[0];
+                if (file) {
+                    document.querySelector("#tsr2").options[1].innerHTML = "Upload - " + file.name;
+                    objectURL = URL.createObjectURL(file);
+                    audioelem = new Audio(objectURL);
+                    audioelem.play();
+                    customringtone2 = objectURL;
+                };
+            });
+        };
+        function startRingtone(tone, stage) {
+            audioelem.pause();
+            if (tone != "none") {
+                if (tone != "upload") {
+                audioelem.currentTime = 0;
+                audioelem = new Audio("ringtones/" + tone + ".wav");
+                audioelem.loop = true;
+                audioelem.play();
+                } else {
+                    if (customringtone1 || customringtone2) {
+                    audioelem.currentTime = 0;
+                    if (stage == 1) {
+                        audioelem = new Audio(customringtone1);
+                    } else {
+                        audioelem = new Audio(customringtone2);
+                    };
+                    audioelem.loop = true;
+                    audioelem.play();
+                    };
+                };
+            };
+        };
+        function stopRingtone() {
+            audioelem.pause();
+            document.querySelector(".stopringtone").style.top = "-100px";
+        };
+    </script>
+</html>

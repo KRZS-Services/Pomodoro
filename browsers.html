@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@300;700" rel="stylesheet">
+        <meta name="theme-color" content="#cd370c">
+        <title>My browser isn't supported? What should I know?</title>
+        <style>
+            * {
+                font-weight: 400;
+                font-family: Noto Serif;
+                color: black;
+            }
+            html, body {
+                margin: 10px;
+                background: rgba(231,210,178);
+                padding: 0;
+            }
+            .content {
+                animation: fademove 1s;
+            }
+            @keyframes fademove {
+                from {opacity: 0%; transform: translateY(20%)}
+                to {opacity: 100%; transform: translateY(0)}
+            }
+            img {
+                height: 1em;
+            }
+            a {
+                color: rgba(205, 55, 12);
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            th {
+                font-weight: bold;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 10px;
+                width: 25%;
+            }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="content">
+            <h1>My browser isn't supported? What should I know?</h1>
+            <p>Some browsers don't have all the functionality other browsers have. The Pomodoro timer is heavily reliant on Chromium/WebKit based browsers because they have every feature the timer needs. In the future our small dev team will try to make workarounds for this very reason, but currently you will have to use one of the below browsers to get full functionality.</p>
+            <ul>
+                <li><img src="browserimages/chrome.png" /> <a href="https://www.google.com/chrome">Google Chrome</a></li>
+                <li><img src="browserimages/edge.png" /> <a href="https://www.microsoft.com/edge">Microsoft Edge</a></li>
+                <li><img src="browserimages/opera.png" /> <a href="https://www.opera.com/">Opera</a></li>
+                <li><img src="browserimages/operagx.png" /> <a href="https://www.opera.com/gx">Opera GX</a></li>
+                <li><img src="browserimages/brave.png" /> <a href="https://www.brave.com/">Brave</a></li>
+                <li><img src="browserimages/vivaldi.png" /> <a href="https://vivaldi.com/">Vivaldi</a></li>
+                <li><img src="browserimages/yandex.png" /> <a href="https://browser.yandex.com/">Yandex Browser</a></li>
+                <li><img src="browserimages/chromium.png" /> <a href="https://download-chromium.appspot.com/">Chromium</a></li>
+                <li><img src="browserimages/safari.png" /> <a href="https://www.apple.com/safari/">Safari</a></li>
+                <li>Any other up to date Chromium or WebKit based browser</li>
+            </ul>
+            <p>If you don't need full functionality, you can use the below browsers</p>
+            <ul>
+                <li><img src="browserimages/firefox.png" /> <a href="https://www.mozilla.org/firefox/new/">Firefox</a></li>
+                <li><img src="browserimages/palemoon.png" /> <a href="https://www.palemoon.org/">Pale Moon</a></li>
+                <li>Any other browser that isn't Chromium or WebKit based</li>
+            </ul>
+            <p>Wondering what you're missing? Refer to this table.</p>
+            <table>
+                <tr>
+                    <th>Browser</th>
+                    <th>Feature</th>
+                    <th>Engine</th>
+                    <th>Explanation</th>
+                </tr>
+                <tr>
+                    <td><img src="browserimages/firefox.png" /> Firefox</td>
+                    <td>Wake Lock</td>
+                    <td>Gecko</td>
+                    <td>Firefox doesn't support wake lock, which prevents the computer from sleeping or the display from turning off.</td>
+                </tr>
+                <tr>
+                    <td><img src="browserimages/palemoon.png" /> Pale Moon</td>
+                    <td>Form Submission, Wake Lock</td>
+                    <td>Goanna</td>
+                    <td>Pale Moon doesn't support wake lock, which prevents the computer from sleeping or the display from turning off. Pale Moon also doesn't support <code>event.preventDefault()</code> on a form, meaning the page will reload when you try to start the timer.</td>
+                </tr>
+            </table>
+            <p id="engine">You are using an unknown browser engine.</p>
+            <p>Note: if you are on mobile, some features may not be supported. Mobile browsers are not tested for the Pomodoro timer.</p>
+        </div>
+    </body>
+    <script>
+        engine = document.querySelector("#engine");
+        if (window.chrome) {
+            engine.innerHTML = 'You are using the <img src="browserimages/chromium.png" /> Chromium browser engine. All features are supported!';
+        } else if (navigator.userAgent.indexOf("Goanna") !== -1) {
+            engine.innerHTML = 'You are using the <img src="browserimages/goanna.png" /> Goanna browser engine. Wake lock and form submission are not supported.';
+        } else if ('MozAppearance' in document.documentElement.style) {
+            engine.innerHTML = 'You are using the <img src="browserimages/gecko.png" /> Gecko browser engine. Wake lock is not supported.';
+        } else if ('WebkitAppearance' in document.documentElement.style) {
+            engine.innerHTML = 'You are using the <img src="browserimages/webkit.png" /> WebKit browser engine. All features are supported!';
+        }
+    </script>
+</html>
