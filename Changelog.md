@@ -4,3 +4,6 @@ Welcome to Pomodoro Timer!
 - Initial release
 ## Version 1.1 [Link](https://github.com/KRZS-Services/Pomodoro/tree/26a64567e745dbcb5110467297dfab5da78f7dd5)
 - Changed the default ringtones
+#### *1.1.1 Small Fix*
+___
+- Fixed an issue where ringtones would not play.
